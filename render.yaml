@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: qr-platform-backend
+    env: java
+    buildCommand: ./mvnw clean install
+    startCommand: java -jar target/*.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: MONGODB_URI
+        value: mongodb+srv://root-qr:root@cluster0.qberb6z.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
