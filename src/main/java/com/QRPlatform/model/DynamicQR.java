@@ -26,6 +26,7 @@ public class DynamicQR {
     private String destinationUrl;
     private DesignData designData;
     private Date createdAt;
+    private Integer scanCount = 0;
     private Date lastUpdated;
     public DynamicQR(String userId, String qrName, String destinationUrl) {
         this.userId = userId;

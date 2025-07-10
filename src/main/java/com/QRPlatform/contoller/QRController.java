@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -74,19 +75,34 @@ public class QRController {
     public ResponseEntity<?> getMyQRCodes(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
         String userEmail = jwtUtil.extractUsername(token);
+        List<DynamicQR> qrs = qrRepository.findByUserId(userEmail);
 
-        return ResponseEntity.ok(qrRepository.findByUserId(userEmail));
+        // ➕ Add total and average calculation
+        int totalScans = qrs.stream().mapToInt(DynamicQR::getScanCount).sum();
+        int avgScans = qrs.size() > 0 ? totalScans / qrs.size() : 0;
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("qrs", qrs); // actual list
+        response.put("totalScans", totalScans);
+        response.put("averageScans", avgScans);
+        System.out.println(totalScans);
+        System.out.println(avgScans);
+//        return ResponseEntity.ok(qrRepository.findByUserId(userEmail));
+        return ResponseEntity.ok(response);
     }
     
     @GetMapping("/{id}")
     public ResponseEntity<?> redirectToDestination(@PathVariable("id") String id) {
-        Optional<DynamicQR> qr = qrRepository.findById(id);
-        
-        if (qr.isPresent()) {
-            String destination = qr.get().getDestinationUrl();
+        Optional<DynamicQR> qrOptional = qrRepository.findById(id);
+
+        if (qrOptional.isPresent()) {
+            DynamicQR qr = qrOptional.get();
+            qr.setScanCount(qr.getScanCount() + 1);
+            qrRepository.save(qr); //  save the DynamicQR object
+
             return ResponseEntity.status(HttpStatus.FOUND)
-                    .header("Location", destination)
-                    .build(); // This will redirect
+                    .header("Location", qr.getDestinationUrl())
+                    .build(); // redirect
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("QR code not found");
         }
