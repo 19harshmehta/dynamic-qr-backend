@@ -24,6 +24,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
                 .authorizeHttpRequests()
+                .requestMatchers("/health").permitAll()
                 .requestMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

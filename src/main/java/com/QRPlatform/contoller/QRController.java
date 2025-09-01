@@ -77,7 +77,6 @@ public class QRController {
         String userEmail = jwtUtil.extractUsername(token);
         List<DynamicQR> qrs = qrRepository.findByUserId(userEmail);
 
-        // ➕ Add total and average calculation
         int totalScans = qrs.stream().mapToInt(DynamicQR::getScanCount).sum();
         int avgScans = qrs.size() > 0 ? totalScans / qrs.size() : 0;
 
@@ -85,9 +84,6 @@ public class QRController {
         response.put("qrs", qrs); // actual list
         response.put("totalScans", totalScans);
         response.put("averageScans", avgScans);
-        System.out.println(totalScans);
-        System.out.println(avgScans);
-//        return ResponseEntity.ok(qrRepository.findByUserId(userEmail));
         return ResponseEntity.ok(response);
     }
     
