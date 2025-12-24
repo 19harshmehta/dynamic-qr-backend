@@ -1,6 +1,5 @@
 package com.QRPlatform.security;
 
-import io.*;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -36,7 +35,7 @@ public class JwtUtil {
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token) {
+    private boolean isTokenExpired(String token) { 
         final Date expiration = Jwts.parser().setSigningKey(secret)
                 .parseClaimsJws(token).getBody().getExpiration();
         return expiration.before(new Date());

@@ -15,4 +15,5 @@ D:\Spring\data\DyanmicQRPlatform\src\main\java\com\QRPlatform\security\JwtUtil.j
 D:\Spring\data\DyanmicQRPlatform\src\main\java\com\QRPlatform\security\SecurityConfig.java
 D:\Spring\data\DyanmicQRPlatform\src\main\java\com\QRPlatform\service\AuthService.java
 D:\Spring\data\DyanmicQRPlatform\src\main\java\com\QRPlatform\service\CustomUserDetailsService.java
+D:\Spring\data\DyanmicQRPlatform\src\main\java\com\QRPlatform\service\MailerService.java
 D:\Spring\data\DyanmicQRPlatform\src\main\java\com\QRPlatform\service\QRService.java
