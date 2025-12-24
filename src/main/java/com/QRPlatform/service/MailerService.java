@@ -16,8 +16,8 @@ public class MailerService
     public void sendScanNotification(String toEmail, String qrName) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("harshhmehta.19@gmail.com");
-            message.setTo(toEmail);
+            message.setFrom("market.mindss23@gmail.com");
+            message.setTo("harshhmehta.19@gmail.com");
             message.setSubject("QR Code Scanned!");
             message.setText("Hello,\n\nYour QR Code '" + qrName + "' has just been scanned successfully.\n\nBest,\nQR Platform");
 
