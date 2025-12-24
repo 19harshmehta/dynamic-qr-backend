@@ -1,31 +1,42 @@
 package com.QRPlatform.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 @Service
-public class MailerService 
-{
-	@Autowired
-    private JavaMailSender mailSender;
+public class MailerService {
 
-    @Async // <--- This runs the method in a separate thread
-    public void sendScanNotification(String toEmail, String qrName) {
+    @Value("${discord.webhook.url}")
+    private String webhookUrl;
+
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+
+    @Async
+    public void sendScanNotification(String ignoredEmail, String qrName) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("market.mindss23@gmail.com");
-            message.setTo("harshhmehta.19@gmail.com");
-            message.setSubject("QR Code Scanned!");
-            message.setText("Hello,\n\nYour QR Code '" + qrName + "' has just been scanned successfully.\n\nBest,\nQR Platform");
+            // Simple JSON payload for Discord
+            String jsonPayload = String.format(
+                "{\"content\": \"🚨 **QR Code Scanned!** 🚨\\nYour QR Code **'%s'** was just visited.\"}", 
+                qrName
+            );
 
-            mailSender.send(message);
-            System.out.println("Scan notification sent to " + toEmail);
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(webhookUrl))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+                .build();
+
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Discord notification sent!");
+
         } catch (Exception e) {
-            // Log error but don't stop the app
-            System.err.println("Failed to send email: " + e.getMessage());
+            System.err.println("Failed to send Discord notification: " + e.getMessage());
         }
     }
 }
