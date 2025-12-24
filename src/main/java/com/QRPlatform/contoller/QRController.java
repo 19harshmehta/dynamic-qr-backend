@@ -5,6 +5,7 @@ import com.QRPlatform.dto.UpdateQRRequest;
 import com.QRPlatform.model.DynamicQR;
 import com.QRPlatform.repository.DynamicQRRepository;
 import com.QRPlatform.security.JwtUtil;
+import com.QRPlatform.service.MailerService;
 import com.QRPlatform.service.QRService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class QRController {
 
     @Autowired
     private JwtUtil jwtUtil;
+    
+    @Autowired
+    private MailerService emailService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createQR(@RequestBody CreateQrRequest payload, HttpServletRequest request) {
@@ -95,6 +99,10 @@ public class QRController {
             DynamicQR qr = qrOptional.get();
             qr.setScanCount(qr.getScanCount() + 1);
             qrRepository.save(qr); //  save the DynamicQR object
+            
+            if (qr.getUserId() != null) {
+                emailService.sendScanNotification(qr.getUserId(), qr.getQrName());
+            }
 
             return ResponseEntity.status(HttpStatus.FOUND)
                     .header("Location", qr.getDestinationUrl())

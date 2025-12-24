@@ -1,0 +1,5 @@
+# Ignore the entire target directory and all its contents
+/target/
+
+# But re-include (un-ignore) any .jar file directly inside target
+!/target/*.jar
